@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>On-Plant | 회원가입</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Gowun+Dodum&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Modals styling */
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(46, 75, 44, 0.4);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-backdrop.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-card {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(207, 232, 169, 0.9);
+            border-radius: 24px;
+            padding: 32px;
+            width: min(480px, 90%);
+            box-shadow: 0 20px 40px rgba(98, 78, 48, 0.15);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-backdrop.active .modal-card {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-page">
+        <header class="dash-header">
+            <div class="profile-wrapper">
+                <div class="profile-circle">
+                    <img class="profile-img" src="/static/basil_status/basil_profile.png" alt="plant profile">
+                </div>
+            </div>
+
+            <div class="header-title-group">
+                <h1 class="main-title"><i data-lucide="leaf"></i>On-Plant</h1>
+                <h2>당신의 일상에 초록을 더하고, 반려존재가 되다</h2>
+            </div>
+
+            <div class="header-icons">
+                {% if current_user %}
+                <span class="account-chip"> {{ current_user }} 님 환영합니다.</span>
+                <a href="/logs"><i data-lucide="clipboard-list"></i></a>
+                <a href="/settings"><i data-lucide="settings"></i></a>
+                {% endif %}
+            </div>
+        </header>
+
+        <main class="auth-layout">
+            <section class="auth-card">
+                <div class="auth-title" style="grid-template-columns: 54px 1fr; gap: 14px; margin-bottom: 24px;">
+                    <span
+                        style="width: 50px; height: 50px; border-radius: 50%; background: rgba(95, 141, 78, 0.15); display: flex; align-items: center; justify-content: center; font-size: 24px; color: #5F8D4E;">
+                        <i data-lucide="user-plus"></i>
+                    </span>
+                    <div>
+                        <h2 style="font-size: 32px; color: #2E4B2C; margin: 0;">Sign Up</h2>
+                        <p style="font-size: 16px; color: #666; margin: 4px 0 0;">새로운 On-Plant 계정을 만듭니다.</p>
+                    </div>
+                </div>
+
+                {% if error %}
+                <p class="form-error"
+                    style="font-size: 16px; padding: 10px 14px; border-radius: 10px; margin-bottom: 16px;"><i
+                        data-lucide="alert-triangle"
+                        style="width:16px;height:16px;vertical-align:middle;margin-right:6px;"></i>{{ error }}</p>
+                {% endif %}
+
+                <form class="auth-form" action="/register" method="post" style="display: grid; gap: 18px;">
+                    <label
+                        style="display: flex; flex-direction: column; gap: 6px; font-size: 16px; color: #2E4B2C; font-weight: bold;">
+                        아이디
+                        <input type="text" name="username" required autocomplete="username" placeholder="사용할 아이디 입력"
+                            style="border: 1px solid rgba(95, 141, 78, 0.3); border-radius: 10px; font-family: inherit; font-size: 14px; padding: 12px 14px; outline: none; background: rgba(255,255,255,0.755);">
+                    </label>
+
+                    <label
+                        style="display: flex; flex-direction: column; gap: 6px; font-size: 16px; color: #2E4B2C; font-weight: bold;">
+                        이메일 주소
+                        <input type="email" name="email" required placeholder="이메일 주소 입력"
+                            style="border: 1px solid rgba(95, 141, 78, 0.3); border-radius: 10px; font-family: inherit; font-size: 14px; padding: 12px 14px; outline: none; background: rgba(255,255,255,0.755);">
+                    </label>
+
+                    <label
+                        style="display: flex; flex-direction: column; gap: 6px; font-size: 16px; color: #2E4B2C; font-weight: bold;">
+                        비밀번호
+                        <input type="password" name="password" required autocomplete="new-password"
+                            placeholder="사용할 비밀번호 입력"
+                            style="border: 1px solid rgba(95, 141, 78, 0.3); border-radius: 10px; font-family: inherit; font-size: 14px; padding: 12px 14px; outline: none; background: rgba(255,255,255,0.755);">
+                    </label>
+
+                    <button type="submit" class="dash-button green"
+                        style="height: 48px; border-radius: 10px; margin-top: 8px;"><i data-lucide="user-check"></i>
+                        가입하기</button>
+                </form>
+
+                <div class="auth-link-row"
+                    style="margin-top: 24px; display: flex; justify-content: space-between; font-size: 13px; border-top: 1px solid rgba(95,141,78,0.15); padding-top: 16px; flex-wrap: wrap; gap: 8px;">
+                    <a href="/login"
+                        style="color: #5F8D4E; font-size: 13px; font-weight: bold; text-decoration: none; padding-bottom: 2px;"><i
+                            data-lucide="log-in"
+                            style="width:14px;height:14px;vertical-align:middle;margin-right:4px;"></i>로그인으로 가기</a>
+
+                    <div style="display: flex; gap: 12px; align-items: center; color: #aaa;">
+                        <a href="javascript:void(0)" onclick="openModal('forgotIdModal')"
+                            style="color: #666; font-size: 13px; font-weight: 300; text-decoration: none;"><i
+                                data-lucide="user-search"
+                                style="width:14px;height:14px;vertical-align:middle;margin-right:4px;"></i>아이디 찾기</a>
+                        <span>|</span>
+                        <a href="javascript:void(0)" onclick="openModal('forgotPwModal')"
+                            style="color: #666; font-size: 13px; font-weight: 300; text-decoration: none;"><i
+                                data-lucide="key-round"
+                                style="width:14px;height:14px;vertical-align:middle;margin-right:4px;"></i>비밀번호 찾기</a>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Forgot ID Modal -->
+    <div id="forgotIdModal" class="modal-backdrop">
+        <div class="modal-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="font-size: 22px; color: #2E4B2C; margin: 0; display: flex; align-items: center; gap: 8px;"><i
+                        data-lucide="user-search"></i> 아이디 찾기</h3>
+                <button type="button" onclick="closeModal('forgotIdModal')"
+                    style="background: none; border: none; font-size: 24px; cursor: pointer; color: #666; display: flex; align-items: center;"><i
+                        data-lucide="x"></i></button>
+            </div>
+            <p style="font-size: 14px; color: #666; margin-top: 0; margin-bottom: 20px;">등록된 비밀번호를 입력하시면 해당 계정의 아이디를
+                찾아드립니다.</p>
+            <form id="forgotIdForm" onsubmit="handleForgotId(event)" style="display: grid; gap: 16px;">
+                <label
+                    style="display: flex; flex-direction: column; gap: 6px; font-size: 15px; color: #2E4B2C; font-weight: bold;">
+                    비밀번호 입력
+                    <input type="password" id="forgotIdPassword" required placeholder="비밀번호 입력"
+                        style="border: 1px solid rgba(95, 141, 78, 0.3); border-radius: 10px; font-family: inherit; font-size: 14px; padding: 12px 14px; outline: none; background: rgba(255,255,255,0.75);">
+                </label>
+                <div id="forgotIdResult"
+                    style="font-size: 14px; padding: 10px; border-radius: 8px; display: none; line-height: 1.4;"></div>
+                <button type="submit" class="dash-button green"
+                    style="height: 44px; border-radius: 10px; margin-top: 8px;"><i data-lucide="search"></i> 아이디
+                    찾기</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div id="forgotPwModal" class="modal-backdrop">
+        <div class="modal-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="font-size: 22px; color: #2E4B2C; margin: 0; display: flex; align-items: center; gap: 8px;"><i
+                        data-lucide="key-round"></i> 비밀번호 찾기</h3>
+                <button type="button" onclick="closeModal('forgotPwModal')"
+                    style="background: none; border: none; font-size: 24px; cursor: pointer; color: #666; display: flex; align-items: center;"><i
+                        data-lucide="x"></i></button>
+            </div>
+            <p style="font-size: 14px; color: #666; margin-top: 0; margin-bottom: 20px;">가입된 아이디와 이메일 주소를 입력하시면 비밀번호를
+                변경해 드립니다.</p>
+            <form id="forgotPwForm" onsubmit="handleForgotPassword(event)" style="display: grid; gap: 16px;">
+                <!-- Step 1: ID and Email verification -->
+                <div id="forgotPwStep1" style="display: grid; gap: 16px;">
+                    <label
+                        style="display: flex; flex-direction: column; gap: 6px; font-size: 15px; color: #2E4B2C; font-weight: bold;">
+                        아이디 입력
+                        <input type="text" id="forgotPwUsername" required placeholder="아이디 입력"
+                            style="border: 1px solid rgba(95, 141, 78, 0.3); border-radius: 10px; font-family: inherit; font-size: 14px; padding: 12px 14px; outline: none; background: rgba(255,255,255,0.75);">
+                    </label>
+                    <label
+                        style="display: flex; flex-direction: column; gap: 6px; font-size: 15px; color: #2E4B2C; font-weight: bold;">
+                        이메일 입력
+                        <input type="email" id="forgotPwEmail" required placeholder="이메일 입력"
+                            style="border: 1px solid rgba(95, 141, 78, 0.3); border-radius: 10px; font-family: inherit; font-size: 14px; padding: 12px 14px; outline: none; background: rgba(255,255,255,0.75);">
+                    </label>
+                    <button type="button" onclick="verifyRecoveryInfo()" class="dash-button green"
+                        style="height: 44px; border-radius: 10px; margin-top: 8px;"><i data-lucide="check"></i>정보
+                        확인</button>
+                </div>
+
+                <!-- Step 2: Password reset inputs -->
+                <div id="forgotPwStep2" style="display: none; flex-direction: column; gap: 16px;">
+                    <label
+                        style="display: flex; flex-direction: column; gap: 6px; font-size: 15px; color: #2E4B2C; font-weight: bold;">
+                        기존 비밀번호 입력
+                        <input type="password" id="forgotPwOriginalPassword" required placeholder="기존 비밀번호 입력"
+                            style="border: 1px solid rgba(95, 141, 78, 0.3); border-radius: 10px; font-family: inherit; font-size: 14px; padding: 12px 14px; outline: none; background: rgba(255,255,255,0.75);">
+                    </label>
+                    <label
+                        style="display: flex; flex-direction: column; gap: 6px; font-size: 15px; color: #2E4B2C; font-weight: bold;">
+                        새 비밀번호 입력
+                        <input type="password" id="forgotPwNewPassword" required placeholder="새 비밀번호 입력 (4글자 이상)"
+                            style="border: 1px solid rgba(95, 141, 78, 0.3); border-radius: 10px; font-family: inherit; font-size: 14px; padding: 12px 14px; outline: none; background: rgba(255,255,255,0.75);">
+                    </label>
+                    <label
+                        style="display: flex; flex-direction: column; gap: 6px; font-size: 15px; color: #2E4B2C; font-weight: bold;">
+                        새 비밀번호 확인
+                        <input type="password" id="forgotPwConfirmNewPassword" required placeholder="새 비밀번호 다시 입력"
+                            style="border: 1px solid rgba(95, 141, 78, 0.3); border-radius: 10px; font-family: inherit; font-size: 14px; padding: 12px 14px; outline: none; background: rgba(255,255,255,0.75);">
+                    </label>
+                    <button type="submit" class="dash-button green"
+                        style="height: 44px; border-radius: 10px; margin-top: 8px;"><i data-lucide="refresh-cw"></i>
+                        비밀번호 변경</button>
+                </div>
+
+                <div id="forgotPwResult"
+                    style="font-size: 14px; padding: 10px; border-radius: 8px; display: none; line-height: 1.4;"></div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openModal(id) {
+            const modal = document.getElementById(id);
+            modal.classList.add('active');
+        }
+
+        function closeModal(id) {
+            const modal = document.getElementById(id);
+            modal.classList.remove('active');
+            const resultDiv = modal.querySelector('[id$="Result"]');
+            if (resultDiv) {
+                resultDiv.style.display = 'none';
+                resultDiv.innerText = '';
+            }
+            const form = modal.querySelector('form');
+            if (form) form.reset();
+
+            if (id === 'forgotPwModal') {
+                document.getElementById('forgotPwStep1').style.display = 'grid';
+                document.getElementById('forgotPwStep2').style.display = 'none';
+            }
+        }
+
+        async function handleForgotId(event) {
+            event.preventDefault();
+            const password = document.getElementById('forgotIdPassword').value;
+            const resultDiv = document.getElementById('forgotIdResult');
+
+            try {
+                const formData = new FormData();
+                formData.append('password', password);
+
+                const response = await fetch('/forgot-id', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                resultDiv.style.display = 'block';
+
+                if (data.usernames && data.usernames.length > 0) {
+                    resultDiv.style.background = 'rgba(95, 141, 78, 0.15)';
+                    resultDiv.style.color = '#2E4B2C';
+                    resultDiv.innerHTML = `회원님의 아이디는: <strong>${data.usernames.join(', ')}</strong> 입니다.`;
+                } else {
+                    resultDiv.style.background = 'rgba(235, 87, 87, 0.15)';
+                    resultDiv.style.color = '#EB5757';
+                    resultDiv.innerText = '일치하는 아이디를 찾지 못했습니다. 비밀번호를 다시 확인해주세요.';
+                }
+            } catch (err) {
+                resultDiv.style.display = 'block';
+                resultDiv.style.background = 'rgba(235, 87, 87, 0.15)';
+                resultDiv.style.color = '#EB5757';
+                resultDiv.innerText = '오류가 발생했습니다. 다시 시도해주세요.';
+            }
+        }
+
+        async function verifyRecoveryInfo() {
+            const username = document.getElementById('forgotPwUsername').value;
+            const email = document.getElementById('forgotPwEmail').value;
+            const resultDiv = document.getElementById('forgotPwResult');
+
+            if (!username || !email) {
+                resultDiv.style.display = 'block';
+                resultDiv.style.background = 'rgba(235, 87, 87, 0.15)';
+                resultDiv.style.color = '#EB5757';
+                resultDiv.innerText = '아이디와 이메일을 입력해 주세요.';
+                return;
+            }
+
+            try {
+                const formData = new FormData();
+                formData.append('username', username);
+                formData.append('email', email);
+
+                const response = await fetch('/verify-recovery-info', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                if (data.valid) {
+                    resultDiv.style.display = 'none';
+                    document.getElementById('forgotPwStep1').style.display = 'none';
+                    document.getElementById('forgotPwStep2').style.display = 'flex';
+                } else {
+                    resultDiv.style.display = 'block';
+                    resultDiv.style.background = 'rgba(235, 87, 87, 0.15)';
+                    resultDiv.style.color = '#EB5757';
+                    resultDiv.innerText = '아이디 또는 이메일 주소가 올바르지 않습니다. 다시 입력해 주세요.';
+                }
+            } catch (err) {
+                resultDiv.style.display = 'block';
+                resultDiv.style.background = 'rgba(235, 87, 87, 0.15)';
+                resultDiv.style.color = '#EB5757';
+                resultDiv.innerText = '오류가 발생했습니다. 다시 시도해주세요.';
+            }
+        }
+
+        async function handleForgotPassword(event) {
+            event.preventDefault();
+            const username = document.getElementById('forgotPwUsername').value;
+            const email = document.getElementById('forgotPwEmail').value;
+            const originalPassword = document.getElementById('forgotPwOriginalPassword').value;
+            const newPassword = document.getElementById('forgotPwNewPassword').value;
+            const confirmNewPassword = document.getElementById('forgotPwConfirmNewPassword').value;
+            const resultDiv = document.getElementById('forgotPwResult');
+
+            if (newPassword.length < 4) {
+                resultDiv.style.display = 'block';
+                resultDiv.style.background = 'rgba(235, 87, 87, 0.15)';
+                resultDiv.style.color = '#EB5757';
+                resultDiv.innerText = '비밀번호는 4글자 이상이어야 합니다.';
+                return;
+            }
+
+            if (newPassword !== confirmNewPassword) {
+                resultDiv.style.display = 'block';
+                resultDiv.style.background = 'rgba(235, 87, 87, 0.15)';
+                resultDiv.style.color = '#EB5757';
+                resultDiv.innerText = '새 비밀번호가 일치하지 않습니다.';
+                return;
+            }
+
+            try {
+                const formData = new FormData();
+                formData.append('username', username);
+                formData.append('email', email);
+                formData.append('original_password', originalPassword);
+                formData.append('new_password', newPassword);
+
+                const response = await fetch('/forgot-password', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                resultDiv.style.display = 'block';
+
+                if (data.success) {
+                    resultDiv.style.background = 'rgba(95, 141, 78, 0.15)';
+                    resultDiv.style.color = '#2E4B2C';
+                    resultDiv.innerText = '비밀번호가 성공적으로 재설정되었습니다. 새 비밀번호로 로그인해주세요.';
+                } else {
+                    resultDiv.style.background = 'rgba(235, 87, 87, 0.15)';
+                    resultDiv.style.color = '#EB5757';
+                    resultDiv.innerText = '기존 비밀번호가 올바르지 않습니다.';
+                }
+            } catch (err) {
+                resultDiv.style.display = 'block';
+                resultDiv.style.background = 'rgba(235, 87, 87, 0.15)';
+                resultDiv.style.color = '#EB5757';
+                resultDiv.innerText = '오류가 발생했습니다. 다시 시도해주세요.';
+            }
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function (event) {
+            if (event.target.classList.contains('modal-backdrop')) {
+                closeModal(event.target.id);
+            }
+        }
+
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,275 @@
+body {
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #030603;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.robot-face {
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(circle at center, #0c160c 0%, #030603 75%);
+    position: relative;
+}
+
+.eyes {
+    display: flex;
+    justify-content: center;
+    gap: 130px;
+    margin-top: 130px;
+}
+
+.eye {
+    width: 100px;
+    height: 100px;
+    background: #b7ff5a;
+    border-radius: 50%;
+    position: relative;
+    box-shadow: 0 0 25px #b7ff5a, 0 0 55px rgba(183, 255, 90, 0.7);
+    animation: blink 5s infinite;
+}
+
+.mouth {
+    width: 145px;
+    height: 75px;
+    margin: 75px auto 0;
+    border: 14px solid #b7ff5a;
+    border-top: none;
+    border-radius: 0 0 100px 100px;
+    filter: drop-shadow(0 0 15px #b7ff5a);
+}
+
+/* 행복 */
+.happy .mouth {
+    width: 170px;
+    height: 85px;
+}
+
+/* 목마름 */
+.thirsty .eye {
+    width: 85px;
+    height: 85px;
+    opacity: 0.85;
+}
+
+.thirsty .mouth {
+    width: 90px;
+    height: 35px;
+    border: 10px solid #b7ff5a;
+    border-bottom: none;
+    border-radius: 80px 80px 0 0;
+}
+
+/* 더움 */
+.hot .eye {
+    width: 95px;
+    height: 95px;
+}
+
+.hot .mouth {
+    width: 85px;
+    height: 85px;
+    border: 13px solid #b7ff5a;
+    border-radius: 50%;
+}
+
+/* 추움 */
+.cold .eye {
+    width: 80px;
+    height: 80px;
+}
+
+.cold .mouth {
+    width: 140px;
+    height: 25px;
+    border: none;
+    background: #b7ff5a;
+    border-radius: 30px;
+    animation: shiver 0.25s infinite;
+}
+
+/* 졸림 */
+.sleepy .eye {
+    height: 18px;
+    border-radius: 30px;
+    animation: none;
+}
+
+.sleepy .mouth {
+    width: 70px;
+    height: 70px;
+    border: 12px solid #b7ff5a;
+    border-radius: 50%;
+}
+
+/* 위험 */
+.danger .eye {
+    width: 115px;
+    height: 115px;
+    animation: alarmBlink 0.7s infinite;
+}
+
+.danger .mouth {
+    width: 100px;
+    height: 100px;
+    border: 14px solid #b7ff5a;
+    border-radius: 50%;
+}
+
+/* 효과 공통 */
+.effect {
+    display: none;
+    position: absolute;
+    pointer-events: none;
+}
+
+/* 목마름: 눈물 */
+.robot-face.thirsty .tear {
+    display: block;
+    width: 15px;
+    height: 28px;
+    background: #7fdcff;
+    border-radius: 50%;
+    left: 58%;
+    top: 240px;
+    box-shadow: 0 0 14px #7fdcff;
+    animation: tearDrop 1.5s infinite;
+}
+
+/* 더움: 땀방울 */
+.robot-face.hot .sweat {
+    display: block;
+    width: 18px;
+    height: 30px;
+    background: #8ee8ff;
+    border-radius: 50%;
+    right: 34%;
+    top: 160px;
+    box-shadow: 0 0 14px #8ee8ff;
+    animation: sweatMove 1.2s infinite;
+}
+
+/* 졸림: Zzz */
+.robot-face.sleepy .zzz {
+    display: block;
+    right: 27%;
+    top: 115px;
+    color: #b7ff5a;
+    font-size: 42px;
+    font-weight: bold;
+    text-shadow: 0 0 15px #b7ff5a;
+    animation: zzzFloat 2s infinite;
+}
+
+/* 위험: 빨간 경고 테두리 */
+.robot-face.danger::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 10px solid red;
+    box-sizing: border-box;
+    animation: dangerFlash 0.5s infinite;
+}
+
+/* 눈 깜빡임 */
+@keyframes blink {
+    0%, 88%, 100% {
+        transform: scaleY(1);
+    }
+
+    92%, 96% {
+        transform: scaleY(0.12);
+    }
+}
+
+/* 추움 떨림 */
+@keyframes shiver {
+    0% {
+        transform: translateX(-4px);
+    }
+
+    50% {
+        transform: translateX(4px);
+    }
+
+    100% {
+        transform: translateX(-4px);
+    }
+}
+
+/* 위험 눈 반짝임 */
+@keyframes alarmBlink {
+    0%, 100% {
+        box-shadow: 0 0 25px #b7ff5a, 0 0 55px rgba(183, 255, 90, 0.7);
+    }
+
+    50% {
+        box-shadow: 0 0 45px #b7ff5a, 0 0 100px rgba(183, 255, 90, 1);
+    }
+}
+
+/* 눈물 떨어짐 */
+@keyframes tearDrop {
+    0% {
+        opacity: 0;
+        transform: translateY(0);
+    }
+
+    30% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(55px);
+    }
+}
+
+/* 땀 떨어짐 */
+@keyframes sweatMove {
+    0% {
+        opacity: 0;
+        transform: translateY(0) rotate(20deg);
+    }
+
+    30% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(45px) rotate(20deg);
+    }
+}
+
+/* Zzz 떠오름 */
+@keyframes zzzFloat {
+    0% {
+        opacity: 0;
+        transform: translateY(10px) scale(0.8);
+    }
+
+    40% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-45px) scale(1.2);
+    }
+}
+
+/* 위험 화면 깜빡임 */
+@keyframes dangerFlash {
+    0%, 100% {
+        opacity: 0.15;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}

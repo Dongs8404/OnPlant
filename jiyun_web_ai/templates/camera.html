@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>On-Plant | Camera</title>
+
+    <link rel="stylesheet" href="/static/style.css?v=1.0.1">
+    <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Gowun+Dodum&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+
+    <div class="dashboard-page">
+
+        <header class="dash-header">
+            <div class="profile-wrapper">
+                <div class="profile-circle">
+                    <img class="profile-img" src="/static/basil_status/basil_profile.png" alt="plant profile">
+                </div>
+            </div>
+
+            <div class="header-title-group">
+                <h1 class="main-title"><i data-lucide="leaf"></i>On-Plant</h1>
+                <h2>당신의 일상에 초록을 더하고, 반려존재가 되다</h2>
+            </div>
+
+            <div class="header-icons">
+                {% if current_user %}
+                <span class="account-chip"> {{ current_user }} 님 환영합니다.</span>
+                <a href="/logs"><i data-lucide="clipboard-list"></i></a>
+                <a href="/settings"><i data-lucide="settings"></i></a>
+                {% else %}
+                <a class="account-chip" href="/login"><i data-lucide="user-round"></i>로그인</a>
+                {% endif %}
+            </div>
+        </header>
+
+        <main class="dashboard-layout">
+
+            <section class="camera-soft-main">
+
+                <div class="camera-title-box">
+                    <div class="camera-title-icon"><i data-lucide="camera"></i></div>
+                    <div>
+                        <h2>카메라 모니터링</h2>
+                        <p>식물 관찰 카메라와 사용자 추적 카메라를 한 화면에서 확인해요</p>
+                    </div>
+                </div>
+
+                <div class="camera-switch-row">
+                    <button type="button" class="camera-switch active" data-camera="plant"
+                        onclick="switchCamera('plant', this)">
+                        <i data-lucide="monitor-dot"></i> 식물 관찰 카메라
+                    </button>
+
+                    <button type="button" class="camera-switch" data-camera="user" onclick="switchCamera('user', this)">
+                        <i data-lucide="eye"></i> 사용자 추적 카메라
+                    </button>
+                </div>
+
+                <div class="camera-live-box">
+                    <div class="live-badge" id="cameraLiveBadge">● LIVE</div>
+                    <img id="cameraStream" src="/video_feed/plant" alt="실시간 카메라" class="camera-live-stream">
+                </div>
+
+                <div class="camera-control-row">
+                    <button type="button" id="cameraYoloButton" class="dash-button green" onclick="toggleYoloMode()">
+                        <i data-lucide="bot"></i> AI 분석 켜기
+                    </button>
+                    <button type="button" class="dash-button green" onclick="openFollowMeStream()">
+                        <i data-lucide="user-round"></i> Follow Me 보기
+                    </button>
+                    <button type="button" class="dash-button white" onclick="refreshCameraStream()">
+                        <i data-lucide="refresh-cw"></i> 새로고침
+                    </button>
+                </div>
+
+            </section>
+
+            <aside class="camera-soft-side">
+
+                <div class="camera-analysis-card">
+                    <div class="camera-analysis-icon"><i data-lucide="monitor-dot"></i></div>
+                    <div>
+                        <h3>현재 카메라</h3>
+                        <p id="cameraName">식물 관찰</p>
+                    </div>
+                </div>
+
+                <div class="camera-analysis-card">
+                    <div class="camera-analysis-icon"><i data-lucide="video"></i></div>
+                    <div>
+                        <h3>스트림 모드</h3>
+                        <p id="cameraMode">일반 영상</p>
+                    </div>
+                </div>
+
+                <div class="camera-analysis-card">
+                    <div class="camera-analysis-icon"><i data-lucide="eye"></i></div>
+                    <div>
+                        <h3>Follow Me</h3>
+                        <p id="followStatus">사용자 카메라 선택 시 테스트</p>
+                    </div>
+                </div>
+
+                <div class="camera-analysis-card">
+                    <div class="camera-analysis-icon"><i data-lucide="link"></i></div>
+                    <div>
+                        <h3>연결 주소</h3>
+                        <p id="cameraRoute">/video_feed/plant</p>
+                    </div>
+                </div>
+
+                <div class="camera-note-card">
+                    <h3><i data-lucide="info"></i> AI Vision Note</h3>
+                    <p>
+                        현재 페이지는 일반 스트림과 YOLO 스트림을 전환해서 확인하는 공간이에요.
+                        Follow Me 테스트는 사용자 추적 카메라에서 AI 분석을 켠 상태와 같아요.
+                    </p>
+                </div>
+
+            </aside>
+
+        </main>
+
+        <nav class="dash-bottom-menu">
+            <a href="/" class="menu-btn"><i data-lucide="layout-dashboard"></i>대시보드</a>
+            <a href="/chat" class="menu-btn"><i data-lucide="mic"></i>음성 대화</a>
+            <a href="/board" class="menu-btn"><i data-lucide="square-pen"></i>게시판</a>
+        </nav>
+
+    </div>
+    <script>
+        let selectedCamera = "plant";
+        let yoloEnabled = false;
+
+        const cameraInfo = {
+            plant: {
+                name: "식물 관찰",
+                normalRoute: "/video_feed/plant",
+                yoloRoute: "/video_feed/plant/yolo",
+                followText: "식물 상태 관찰 모드"
+            },
+            user: {
+                name: "사용자 추적",
+                normalRoute: "/video_feed/user",
+                yoloRoute: "/video_feed/user/yolo",
+                followText: "Follow Me 테스트 가능"
+            }
+        };
+
+        function getCurrentRoute() {
+            const info = cameraInfo[selectedCamera];
+            return yoloEnabled ? info.yoloRoute : info.normalRoute;
+        }
+
+        function updateCameraUi() {
+            const stream = document.getElementById("cameraStream");
+            const route = getCurrentRoute();
+            const info = cameraInfo[selectedCamera];
+
+            stream.src = route + "?time=" + new Date().getTime();
+
+            const buttons = document.querySelectorAll(".camera-switch");
+            buttons.forEach(btn => btn.classList.remove("active"));
+            document.querySelector(`[data-camera="${selectedCamera}"]`).classList.add("active");
+
+            document.getElementById("cameraName").innerText = info.name;
+            document.getElementById("cameraMode").innerText = yoloEnabled ? "YOLO AI 분석" : "일반 영상";
+            document.getElementById("followStatus").innerText = info.followText;
+            document.getElementById("cameraRoute").innerText = route;
+            document.getElementById("cameraLiveBadge").innerText = yoloEnabled ? "● YOLO LIVE" : "● LIVE";
+
+            const yoloButton = document.getElementById("cameraYoloButton");
+            yoloButton.innerHTML = yoloEnabled ? '<i data-lucide="bot"></i> AI 분석 끄기' : '<i data-lucide="bot"></i> AI 분석 켜기';
+            yoloButton.classList.toggle("active", yoloEnabled);
+            lucide.createIcons();
+        }
+
+        function switchCamera(cameraType) {
+            selectedCamera = cameraType;
+            updateCameraUi();
+        }
+
+        function toggleYoloMode() {
+            yoloEnabled = !yoloEnabled;
+            updateCameraUi();
+        }
+
+        function openFollowMeStream() {
+            selectedCamera = "user";
+            yoloEnabled = true;
+            updateCameraUi();
+        }
+
+        function refreshCameraStream() {
+            updateCameraUi();
+        }
+
+        // Initialize Lucide icons on page load
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

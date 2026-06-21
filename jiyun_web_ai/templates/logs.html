@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>On-Plant | 성장 기록</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Gowun+Dodum&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+    <div class="dashboard-page">
+        <header class="dash-header">
+            <div class="profile-wrapper">
+                <div class="profile-circle">
+                    <img class="profile-img" src="/static/basil_status/basil_profile.png" alt="plant profile">
+                </div>
+            </div>
+
+            <div class="header-title-group">
+                <h1 class="main-title"><i data-lucide="leaf"></i>On-Plant</h1>
+                <h2>당신의 일상에 초록을 더하고, 반려존재가 되다</h2>
+            </div>
+
+            <div class="header-icons">
+                {% if current_user %}
+                <span class="account-chip"> {{ current_user }} 님 환영합니다.</span>
+                <a href="/logs"><i data-lucide="clipboard-list"></i></a>
+                <a href="/settings"><i data-lucide="settings"></i></a>
+                {% else %}
+                <a class="account-chip" href="/login"><i data-lucide="user-round"></i>로그인</a>
+                {% endif %}
+            </div>
+        </header>
+
+        <main class="dashboard-layout">
+            <section class="board-main-card" style="padding: 22px; grid-template-rows: auto 1fr;">
+                <div class="logs-title-box">
+                    <div class="logs-title-icon" style="background: rgba(95, 141, 78, 0.15); color: #5F8D4E;">
+                        <i data-lucide="clipboard-list"></i>
+                    </div>
+                    <div>
+                        <h2>바질이 성장 기록</h2>
+                        <p>수분, 햇빛, 온도, 습도 변화를 시간순으로 확인해요.</p>
+                    </div>
+                </div>
+
+                <div class="sensor-log-list" style="margin-top: 14px;">
+                    {% if recent_logs %}
+                    {% for log in recent_logs %}
+                    <div class="sensor-log-item">
+                        <div class="log-time-box">
+                            <span style="font-size: 14px;">{{ log[5][5:10] }}</span>
+                            <strong style="font-size: 20px; font-weight: bold; margin-top: 2px;">{{ log[5][11:16]
+                                }}</strong>
+                        </div>
+
+                        <div class="log-value-grid">
+                            <div class="log-value-card">
+                                <span style="color: rgb(125, 210, 249); display: flex; align-items: center;"><i
+                                        data-lucide="droplet" style="width: 20px; height: 20px;"></i></span>
+                                <p>수분</p>
+                                <strong>{{ log[1] }}%</strong>
+                            </div>
+
+                            <div class="log-value-card">
+                                <span style="color: rgb(251, 194, 107);; display: flex; align-items: center;"><i
+                                        data-lucide="sun" style="width: 20px; height: 20px;"></i></span>
+                                <p>햇빛</p>
+                                <strong>{{ log[4] }}lx</strong>
+                            </div>
+
+                            <div class="log-value-card">
+                                <span style="color: rgb(249, 169, 182); display: flex; align-items: center;"><i
+                                        data-lucide="thermometer" style="width: 20px; height: 20px;"></i></span>
+                                <p>온도</p>
+                                <strong>{{ log[2] }}℃</strong>
+                            </div>
+
+                            <div class="log-value-card">
+                                <span style="color: rgb(107, 206, 137); display: flex; align-items: center;"><i
+                                        data-lucide="droplets" style="width: 20px; height: 20px;"></i></span>
+                                <p>습도</p>
+                                <strong>{{ log[3] }}%</strong>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="empty-board" style="min-height: 200px;">
+                        <i data-lucide="clipboard" style="width: 48px; height: 48px; color: #5F8D4E;"></i>
+                        <h3>아직 센서 로그 기록이 없어요</h3>
+                        <p>센서 측정 데이터가 들어오면 여기에 시간별로 쌓이게 됩니다.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </section>
+
+            <aside class="sensor-side" style="grid-template-rows: auto 1fr auto; padding: 22px;">
+                <div class="logs-summary-card">
+                    <div class="logs-summary-icon" style="background: rgba(95, 141, 78, 0.15); color: #5F8D4E;">
+                        <i data-lucide="sprout"></i>
+                    </div>
+                    <div>
+                        <h2>오늘의 기록</h2>
+                        <p>최근 센서 데이터 변화와 함께 바질이와 나눈 최근 대화들을 기록해요.</p>
+                    </div>
+                </div>
+
+                <div class="chat-log-card" style="margin-top: 14px;">
+                    <div class="chat-log-title">
+                        <i data-lucide="message-circle" style="color: #5F8D4E;"></i>
+                        <h3>최근 대화</h3>
+                    </div>
+
+                    <div class="chat-log-list">
+                        {% if recent_chats %}
+                        {% for chat in recent_chats %}
+                        <div class="chat-log-item">
+                            <div class="chat-row user" style="margin-bottom: 8px;">
+                                <span style="color: #5F8D4E;"><i data-lucide="user"
+                                        style="width:16px;height:16px;"></i></span>
+                                <p style="font-size: 15px; font-weight: lighter; margin: 0; color: #4D4D4D;">{{ chat[0]
+                                    }}</p>
+                            </div>
+
+                            <div class="chat-row plant">
+                                <span style="color: #2E4B2C;"><i data-lucide="bot"
+                                        style="width:16px; height:16px;"></i></span>
+                                <p style="font-size: 15px; margin: 0; color: #2E4B2C;">{{ chat[1] }}
+                                </p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <div style="text-align: center; padding: 32px 16px; color: #777;">
+                            <i data-lucide="message-square-off" style="width:32px;height:32px;margin-bottom:8px;"></i>
+                            <p style="margin:0; font-size:16px;">아직 대화한 기록이 없어요.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="settings-button-row" style="margin-top: 20px; width: 100%;">
+                    <a href="/" class="dash-button green" style="font-size:16px;"><i data-lucide="message-square"></i>문자
+                        대화</a>
+                    <a href="/chat" class="dash-button white" style="font-size:16px;"><i data-lucide="mic"></i>음성 대화</a>
+                </div>
+            </aside>
+        </main>
+
+        <nav class="dash-bottom-menu">
+            <a href="/" class="menu-btn"><i data-lucide="layout-dashboard"></i>대시보드</a>
+            <a href="/camera" class="menu-btn"><i data-lucide="camera"></i>카메라</a>
+            <a href="/board" class="menu-btn"><i data-lucide="square-pen"></i>게시판</a>
+        </nav>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

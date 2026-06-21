@@ -1,0 +1,95 @@
+# ==========================================================
+# On-Plant AI Robot Project
+# .gitignore
+# ==========================================================
+
+# ==========================
+# Python Cache
+# ==========================
+
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ==========================
+# Virtual Environment
+# ==========================
+
+.venv/
+env/
+venv/
+ENV/
+
+# ==========================
+# Environment Variables
+# ==========================
+
+.env
+.env.*
+
+# ==========================
+# Local Database
+# ==========================
+
+db/on_plant.db
+*.db
+*.sqlite
+*.sqlite3
+
+# ==========================
+# AI / Runtime Generated Files
+# ==========================
+
+*.wav
+*.mp3
+voice_state.txt
+*.log
+
+# ==========================
+# Temporary Files
+# ==========================
+
+temp/
+tmp/
+uploads/
+
+# ==========================
+# Python Build
+# ==========================
+
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# ==========================
+# Test / Cache
+# ==========================
+
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# ==========================
+# Jupyter Notebook
+# ==========================
+
+.ipynb_checkpoints/
+
+# ==========================
+# IDE
+# ==========================
+
+.vscode/
+.idea/
+tempCodeRunnerFile.py
+
+# ==========================
+# Operating System
+# ==========================
+
+.DS_Store
+Thumbs.db

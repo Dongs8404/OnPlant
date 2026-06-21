@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>On-Plant | 설정</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Gowun+Dodum&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+    <div class="dashboard-page">
+        <header class="dash-header">
+            <div class="profile-wrapper">
+                <div class="profile-circle">
+                    <img class="profile-img" src="/static/basil_status/basil_profile.png" alt="plant profile">
+                </div>
+            </div>
+
+            <div class="header-title-group">
+                <h1 class="main-title"><i data-lucide="leaf"></i>On-Plant</h1>
+                <h2>당신의 일상에 초록을 더하고, 반려존재가 되다</h2>
+            </div>
+
+            <div class="header-icons">
+                {% if current_user %}
+                <span class="account-chip"> {{ current_user }} 님 환영합니다.</span>
+                <a href="/logs"><i data-lucide="clipboard-list"></i></a>
+                <a href="/settings"><i data-lucide="settings"></i></a>
+                {% else %}
+                <a class="account-chip" href="/login"><i data-lucide="user-round"></i>로그인</a>
+                {% endif %}
+            </div>
+        </header>
+
+        <main class="dashboard-layout">
+            <section class="board-main-card" style="padding: 22px; grid-template-rows: auto 1fr;">
+                <div class="settings-title-box-soft">
+                    <div class="settings-title-icon-soft" style="background: rgba(95, 141, 78, 0.15); color: #5F8D4E;">
+                        <i data-lucide="settings"></i>
+                    </div>
+                    <div>
+                        <h2>시스템 설정</h2>
+                        <p>바질이의 동작 방식, 음성 대화, 알림 상태를 관리해요.</p>
+                    </div>
+                </div>
+
+                <div class="settings-option-grid" style="margin-top: 14px;">
+                    <div class="setting-option-card-soft">
+                        <div class="setting-option-icon-soft" style="background: rgba(95, 141, 78, 0.15); color: #5F8D4E;">
+                            <i data-lucide="sparkles"></i>
+                        </div>
+                        <div>
+                            <h3>자동 모드</h3>
+                            <p>센서 상태에 따라 바질이가 자동으로 상태를 판단해요.</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-option-card-soft">
+                        <div class="setting-option-icon-soft" style="background: rgba(95, 141, 78, 0.15); color: #5F8D4E;">
+                            <i data-lucide="mic"></i>
+                        </div>
+                        <div>
+                            <h3>음성 대화</h3>
+                            <p>호출어 “하이 오피”를 듣고 음성으로 대화해요.</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-option-card-soft">
+                        <div class="setting-option-icon-soft" style="background: rgba(95, 141, 78, 0.15); color: #5F8D4E;">
+                            <i data-lucide="star"></i>
+                        </div>
+                        <div>
+                            <h3>관리 추천</h3>
+                            <p>식물 상태에 맞는 관리 메시지를 보여줘요.</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-option-card-soft">
+                        <div class="setting-option-icon-soft" style="background: rgba(95, 141, 78, 0.15); color: #5F8D4E;">
+                            <i data-lucide="bell"></i>
+                        </div>
+                        <div>
+                            <h3>상태 알림</h3>
+                            <p>물 부족, 햇빛 부족, 온도 이상을 알려줘요.</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-option-card-soft">
+                        <div class="setting-option-icon-soft" style="background: rgba(95, 141, 78, 0.15); color: #5F8D4E;">
+                            <i data-lucide="sliders"></i>
+                        </div>
+                        <div>
+                            <h3>수동 제어</h3>
+                            <p>사용자가 직접 이동이나 동작을 제어할 수 있어요.</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-option-card-soft">
+                        <div class="setting-option-icon-soft" style="background: rgba(95, 141, 78, 0.15); color: #5F8D4E;">
+                            <i data-lucide="camera"></i>
+                        </div>
+                        <div>
+                            <h3>카메라 모드</h3>
+                            <p>Camera Module 3 실시간 화면을 사용할 예정이에요.</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span></span>
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <aside class="sensor-side" style="grid-template-rows: auto auto 1fr auto; padding: 22px;">
+                <div class="device-status-card-soft">
+                    <div class="device-icon-soft" style="background: rgba(95, 141, 78, 0.15); color: #5F8D4E;">
+                        <i data-lucide="sprout"></i>
+                    </div>
+                    <h2>바질이 상태</h2>
+                    <p>현재 시스템은 테스트 모드로 실행 중이에요.</p>
+                </div>
+
+                <div class="system-info-card-soft" style="margin-top: 14px;">
+                    <h3><i data-lucide="info" style="width:20px;height:20px;vertical-align:middle;margin-right:6px;"></i>시스템 정보</h3>
+
+                    <div class="system-info-row-soft">
+                        <span>서버</span>
+                        <strong>FastAPI</strong>
+                    </div>
+
+                    <div class="system-info-row-soft">
+                        <span>DB</span>
+                        <strong>SQLite</strong>
+                    </div>
+
+                    <div class="system-info-row-soft">
+                        <span>음성</span>
+                        <strong>STT / TTS</strong>
+                    </div>
+
+                    <div class="system-info-row-soft">
+                        <span>호출어</span>
+                        <strong>하이 오피</strong>
+                    </div>
+
+                    <div class="system-info-row-soft">
+                        <span>상태</span>
+                        <strong class="status-good">정상</strong>
+                    </div>
+                </div>
+
+                <div class="settings-button-row" style="margin-top: 20px; width: 100%;">
+                    <a href="/" class="dash-button green" style="font-size:16px;"><i data-lucide="layout-dashboard"></i>대시보드</a>
+                    <a href="/logs" class="dash-button white" style="font-size:16px;"><i data-lucide="clipboard-list"></i>성장기록</a>
+                </div>
+            </aside>
+        </main>
+
+        <nav class="dash-bottom-menu">
+            <a href="/" class="menu-btn"><i data-lucide="layout-dashboard"></i>대시보드</a>
+            <a href="/camera" class="menu-btn"><i data-lucide="camera"></i>카메라</a>
+            <a href="/board" class="menu-btn"><i data-lucide="square-pen"></i>게시판</a>
+        </nav>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

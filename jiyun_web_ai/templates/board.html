@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>On-Plant | 게시판</title>
+
+    <link rel="stylesheet" href="/static/style.css?v=classic">
+    <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Gowun+Dodum&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+    <div class="dashboard-page classic-board-page">
+        <header class="dash-header">
+            <div class="profile-wrapper">
+                <div class="profile-circle">
+                    <img class="profile-img" src="/static/basil_status/basil_profile.png" alt="plant profile">
+                </div>
+            </div>
+
+            <div class="header-title-group">
+                <h1 class="main-title"><i data-lucide="leaf"></i>On-Plant</h1>
+                <h2>당신의 일상에 초록을 더하고, 반려존재가 되다</h2>
+            </div>
+
+            <div class="header-icons">
+                {% if current_user %}
+                <span class="account-chip"> {{ current_user }} 님 환영합니다.</span>
+                <a href="/logs"><i data-lucide="clipboard-list"></i></a>
+                <a href="/settings"><i data-lucide="settings"></i></a>
+                {% else %}
+                <a class="account-chip" href="/login"><i data-lucide="user-round"></i>로그인</a>
+                {% endif %}
+            </div>
+        </header>
+
+        <main class="dashboard-layout">
+            <section class="board-main-card soft-main-card">
+                <div class="board-title-row">
+                    <div>
+                        <h2><i data-lucide="square-pen" style="vertical-align: middle; margin-right: 8px;"></i>게시판</h2>
+                        <p>식물 관찰 기록, 테스트 메모, 개발 기록을 남기는 공간이에요.</p>
+                    </div>
+
+                    {% if current_user %}
+                    <a href="/board/new" class="dash-button green"><i data-lucide="plus-circle"></i>글쓰기</a>
+                    {% else %}
+                    <a href="/login" class="dash-button green"><i data-lucide="log-in"></i>로그인</a>
+                    {% endif %}
+                </div>
+
+                <div class="post-list-container">
+                    {% if posts %}
+                    <table class="classic-board-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 70px;" class="cell-center">No.</th>
+                                <th class="cell-title">제목</th>
+                                <th style="width: 130px;" class="cell-center">작성자</th>
+                                <th style="width: 110px;" class="cell-center">작성일</th>
+                                <th style="width: 80px;" class="cell-center">조회수</th>
+                                <th style="width: 80px;" class="cell-center">추천</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for post in posts %}
+                            <tr class="classic-board-tr {% if post[8] == 1 %}notice-row{% endif %}"
+                                onclick="window.location.href='/board/{{ post[0] }}'">
+                                <td class="cell-center">
+                                    {% if post[8] == 1 %}
+                                    <span class="notice-badge">공지</span>
+                                    {% else %}
+                                    {{ post[0] }}
+                                    {% endif %}
+                                </td>
+                                <td class="cell-title">
+                                    <a class="classic-title-link {% if post[8] == 1 %}notice-title{% endif %}"
+                                        href="/board/{{ post[0] }}" onclick="event.stopPropagation();">
+                                        {{ post[1] }}
+                                    </a>
+                                    {% if post[6] > 0 %}
+                                    <span class="comment-count-badge">[{{ post[6] }}]</span>
+                                    {% endif %}
+                                </td>
+                                <td class="cell-center">{{ post[2] }}</td>
+                                <td class="cell-center">{{ post[3][:10].replace('-', '.') }}</td>
+                                <td class="cell-center">{{ post[5] }}</td>
+                                <td class="cell-center">{{ post[7] }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="empty-board">
+                        <i data-lucide="folder-open" style="width: 48px; height: 48px; color: #5F8D4E;"></i>
+                        <h3>아직 게시글이 없어요</h3>
+                        <p>첫 번째 관찰 기록을 남겨 보세요.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </section>
+
+            <aside class="sensor-side soft-side-card board-side-panel">
+                <div class="sensor-side-title">
+                    <i data-lucide="user-check"></i>
+                    <h2>사용자 정보</h2>
+                </div>
+
+                <div class="side-sensor-card sensor-card-4"
+                    style="grid-template-columns: 1fr; padding: 20px; background: white;">
+                    <div>
+                        <span style="font-size: 12px; color: #2E4B2C; margin-left: 0px; font-weight: lighter;">현재
+                            사용자</span>
+                        {% if current_user %}
+                        <span style="font-size: 22px; display: block; margin-top: 8px; color: #2E4B2C;">{{ current_user
+                            }}</span>
+                        <p style="text-align: left; margin-right: 20px; color: #4d4d4d;">글 작성과 내 글 수정/삭제가 가능해요.
+                        </p>
+                        {% else %}
+                        <span style="font-size: 28px; display: block; margin-top: 8px; color: #777;">방문자</span>
+                        <p style="text-align: left; margin-top: 8px; color: #777;">게시글 읽기는 가능하고, 글 작성은 로그인 후 가능해요.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px; display: grid; gap: 12px;">
+                    {% if current_user %}
+                    <a href="/logout" class="dash-button white"><i data-lucide="log-out"></i>로그아웃</a>
+                    {% else %}
+                    <a href="/login" class="dash-button white"><i data-lucide="log-in"></i>로그인하기</a>
+                    {% endif %}
+                    <a href="/" class="dash-button green"><i data-lucide="layout-dashboard"></i>대시보드로</a>
+                </div>
+            </aside>
+        </main>
+
+        <nav class="dash-bottom-menu">
+            <a href="/" class="menu-btn"><i data-lucide="layout-dashboard"></i>대시보드</a>
+            <a href="/camera" class="menu-btn"><i data-lucide="camera"></i>카메라</a>
+            <a href="/chat" class="menu-btn"><i data-lucide="mic"></i>음성 대화</a>
+        </nav>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>On-Plant | Voice</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Gowun+Dodum&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+
+    <div class="dashboard-page">
+
+        <header class="dash-header">
+            <div class="profile-wrapper">
+                <div class="profile-circle">
+                    <img class="profile-img" src="/static/basil_status/basil_profile.png" alt="plant profile">
+                </div>
+            </div>
+
+            <div class="header-title-group">
+                <h1 class="main-title"><i data-lucide="leaf"></i>On-Plant</h1>
+                <h2>당신의 일상에 초록을 더하고, 반려존재가 되다</h2>
+            </div>
+
+            <div class="header-icons">
+                {% if current_user %}
+                <span class="account-chip"> {{ current_user }} 님 환영합니다.</span>
+                <a href="/logs"><i data-lucide="clipboard-list"></i></a>
+                <a href="/settings"><i data-lucide="settings"></i></a>
+                {% else %}
+                <a class="account-chip" href="/login"><i data-lucide="user-round"></i>로그인</a>
+                {% endif %}
+            </div>
+        </header>
+
+        <main class="dashboard-layout">
+
+            <section class="voice-main-card">
+
+                <div class="voice-title-box">
+                    <div class="voice-title-icon"><i data-lucide="mic"></i></div>
+                    <div>
+                        <h2>바질이와 음성 대화</h2>
+                        <p>호출어 <strong>“하이 오피”</strong>를 말하면 바질이가 듣기 시작해요.</p>
+                    </div>
+                </div>
+
+                <div class="voice-center-card">
+                    <div id="voiceCircle" class="voice-circle idle">
+                        <div class="voice-wave wave1"></div>
+                        <div class="voice-wave wave2"></div>
+                        <div class="voice-wave wave3"></div>
+                        <div class="mic-icon"><i data-lucide="mic"></i></div>
+                    </div>
+
+                    <h2 id="voiceStateTitle">대기 중이에요</h2>
+                    <p id="voiceStateMessage">“하이 오피”라고 불러주세요.</p>
+                </div>
+
+                <div class="voice-status-row">
+                    <div class="voice-status-card status-idle">
+                        <span><i data-lucide="power"></i></span>
+                        <p>idle</p>
+                        <strong>호출어 대기</strong>
+                    </div>
+
+                    <div class="voice-status-card status-listening">
+                        <span><i data-lucide="ear"></i></span>
+                        <p>listening</p>
+                        <strong>듣는 중</strong>
+                    </div>
+
+                    <div class="voice-status-card status-thinking">
+                        <span><i data-lucide="brain"></i></span>
+                        <p>thinking</p>
+                        <strong>생각 중</strong>
+                    </div>
+
+                    <div class="voice-status-card status-speaking">
+                        <span><i data-lucide="volume-2"></i></span>
+                        <p>speaking</p>
+                        <strong>말하는 중</strong>
+                    </div>
+                </div>
+
+            </section>
+
+            <aside class="voice-side-card">
+
+                <div class="voice-plant-card">
+                    <img src="/static/basil_status/basil_profile.png" alt="basil">
+                    <h2>바질이</h2>
+                    <p>집사의 음성을 듣고 음성으로 대답해요.</p>
+                </div>
+
+                <div class="voice-guide-card">
+                    <h3>바질이와 대화하는 방법</h3>
+                    <p>1. “하이 오피”라고 불러주세요.</p>
+                    <p>2. 바질이가 응답할 때까지 기다려주세요.</p>
+                    <p>3. 바질이와 대화를 나누세요!</p>
+                </div>
+
+                <div class="voice-test-card">
+                    <h3><i data-lucide="mic" style="vertical-align: middle; margin-right: 6px;"></i>PC 마이크 테스트</h3>
+                    <button class="dash-button" onclick="startWebVoiceTest()">음성 인식 시작</button>
+                    <p id="webVoiceResult">아직 인식된 말이 없어요.</p>
+                </div>
+
+            </aside>
+
+        </main>
+
+        <nav class="dash-bottom-menu">
+            <a href="/" class="menu-btn"><i data-lucide="layout-dashboard"></i>대시보드</a>
+            <a href="/camera" class="menu-btn"><i data-lucide="camera"></i>카메라</a>
+            <a href="/board" class="menu-btn"><i data-lucide="square-pen"></i>게시판</a>
+        </nav>
+
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        async function checkVoiceState() {
+            try {
+                const response = await fetch("/voice-status");
+                const data = await response.json();
+
+                const circle = document.getElementById("voiceCircle");
+                const title = document.getElementById("voiceStateTitle");
+                const message = document.getElementById("voiceStateMessage");
+
+                if (data.state === "listening") {
+                    title.innerText = "듣고 있어요";
+                    message.innerText = "질문을 말해주세요.";
+                    circle.className = "voice-circle listening";
+                } else if (data.state === "thinking") {
+                    title.innerText = "생각하고 있어요";
+                    message.innerText = "바질이가 답변을 준비 중이에요.";
+                    circle.className = "voice-circle thinking";
+                } else if (data.state === "speaking") {
+                    title.innerText = "대답하고 있어요";
+                    message.innerText = "바질이의 음성 답변을 들어주세요.";
+                    circle.className = "voice-circle speaking";
+                } else {
+                    title.innerText = "대기 중이에요";
+                    message.innerText = "“하이 오피”라고 불러주세요.";
+                    circle.className = "voice-circle idle";
+                }
+
+            } catch (error) {
+                console.error("voice state error:", error);
+            }
+        }
+
+        checkVoiceState();
+        setInterval(checkVoiceState, 1500);
+
+        function startWebVoiceTest() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+            if (!SpeechRecognition) {
+                alert("이 브라우저는 음성 인식을 지원하지 않아요. Chrome으로 실행해 주세요.");
+                return;
+            }
+
+            const recognition = new SpeechRecognition();
+            recognition.lang = "ko-KR";
+            recognition.interimResults = true;
+            recognition.continuous = false;
+
+            const resultBox = document.getElementById("webVoiceResult");
+            resultBox.innerText = "듣고 있어요...";
+
+            recognition.onresult = function (event) {
+                let text = "";
+
+                for (let i = 0; i < event.results.length; i++) {
+                    text += event.results[i][0].transcript;
+                }
+
+                resultBox.innerText = "인식된 말: " + text;
+            };
+
+            recognition.onerror = function (event) {
+                resultBox.innerText = "음성 인식 오류: " + event.error;
+            };
+
+            recognition.start();
+        }
+    </script>
+
+</body>
+
+</html>

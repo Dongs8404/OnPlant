@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>On-Plant Face</title>
+    <link rel="stylesheet" href="/static/face.css">
+    
+</head>
+
+<body>
+
+    <div id="robotFace" class="robot-face {{ mood_class }}">
+        <div class="eyes">
+            <div class="eye left-eye"></div>
+            <div class="eye right-eye"></div>
+        </div>
+
+        <div class="mouth"></div>
+
+        <div class="effect tear"></div>
+        <div class="effect sweat"></div>
+        <div class="effect zzz">Zzz</div>
+    </div>
+
+    <script>
+        async function checkFaceStatus() {
+            try {
+                const response = await fetch("/face-status");
+                const data = await response.json();
+
+                const face = document.getElementById("robotFace");
+                face.className = "robot-face " + data.mood_class;
+
+            } catch (error) {
+                console.error("상태 확인 오류:", error);
+            }
+        }
+
+        checkFaceStatus();
+        setInterval(checkFaceStatus, 3000);
+    </script>
+
+</body>
+
+</html>

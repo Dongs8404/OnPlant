@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>On-Plant</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Gowun+Dodum&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+
+    <div class="dashboard-page">
+
+        <header class="dash-header">
+            <div class="profile-wrapper">
+                <div class="profile-circle">
+                    <img class="profile-img" src="/static/basil_status/basil_profile.png" alt="plant profile">
+                </div>
+            </div>
+
+            <div class="header-title-group">
+                <h1 class="main-title"><i data-lucide="leaf"></i>On-Plant</h1>
+                <h2>당신의 일상에 초록을 더하고, 반려존재가 되다</h2>
+            </div>
+
+            <div class="header-icons">
+                {% if current_user %}
+                <span class="account-chip"> {{ current_user }} 님 환영합니다.</span>
+                <a href="/logs"><i data-lucide="clipboard-list"></i></a>
+                <a href="/settings"><i data-lucide="settings"></i></a>
+                {% else %}
+                <a class="account-chip" href="/login"><i data-lucide="user-round"></i>로그인</a>
+                {% endif %}
+            </div>
+        </header>
+
+        <main class="dashboard-layout">
+
+            <section class="dash-main-card">
+
+                <div class="plant-camera-card">
+                    <div class="plant-status-panel">
+                        <div class="plant-name-row">
+                            <span class="plant-leaf-mark"><i data-lucide="sprout"></i></span>
+                            <h2>{{ plant.name }}</h2>
+                            <a href="/" class="refresh-mini-button" title="식물 상태 갱신"><i
+                                    data-lucide="refresh-cw"></i></a>
+                        </div>
+
+                        <div class="status-divider"></div>
+
+                        <span class="status-label">현재 상태</span>
+                        <h3><span>지금 바질이는</span><br>{{ plant.mood }}</h3>
+
+                        <div class="plant-status-image">
+                            <img src="/static/basil_status/{{ plant.image }}" alt="{{ plant.mood }} 바질이 상태">
+                        </div>
+
+                        <div class="plant-message-box">
+                            <span><i data-lucide="bot"></i></span>
+                            <p>{{ plant.message }}</p>
+                        </div>
+                    </div>
+
+                    <div class="camera-preview">
+                        <span class="camera-label">실시간 바질이 모습</span>
+                        <strong class="camera-live-pill">● LIVE</strong>
+                        <img src="/video_feed/plant" alt="plant camera stream">
+                    </div>
+                </div>
+
+                <div class="dashboard-info-row">
+                    <div class="summary-box">
+                        <div class="summary-icon"><i data-lucide="circle-check-big"></i></div>
+                        <div>
+                            <h3>센서 기반 상태 요약</h3>
+
+                            {% for status in status_list %}
+                            <p class="status-item">
+                                <i data-lucide="{{ status.icon }}"></i>
+                                <span>{{ status.text }}</span>
+                            </p>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="recommend-box">
+                        <div class="lightbulb-icon"><i data-lucide="lightbulb"></i></div>
+                        <div>
+                            <h3>관리 추천 메시지</h3>
+
+                            {% for action in action_list %}
+                            <p class="recommend-item">
+                                <i data-lucide="{{ action.icon }}"></i>
+                                <span>{{ action.text }}</span>
+                            </p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <aside class="sensor-side">
+                <div class="sensor-side-title">
+                    <span></span>
+                    <h2>현재 환경은...</h2>
+                </div>
+
+                {% for sensor in sensors %}
+                <div class="side-sensor-card sensor-card-{{ loop.index }}">
+                    <div class="side-icon">
+                        {% if sensor.name == "수분" %}
+                        <i data-lucide="droplet"></i>
+                        {% elif sensor.name == "햇빛" %}
+                        <i data-lucide="sun"></i>
+                        {% elif sensor.name == "온도" %}
+                        <i data-lucide="thermometer"></i>
+                        {% elif sensor.name == "습도" %}
+                        <i data-lucide="droplets"></i>
+                        {% else %}
+                        <i data-lucide="{{ sensor.icon }}"></i>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <span>{{ sensor.name }}</span>
+                        <strong>{{ sensor.value }}</strong>
+                        <p>{{ sensor.status }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <p class="sensor-updated">◷ 마지막 업데이트 방금 전</p>
+
+                <a class="dash-button white" href="/chat">바질이와 대화하기<i data-lucide="message-circle"></i></a>
+                {% if current_user %}
+                <a class="dash-button white" href="/logout">로그아웃</a>
+                {% else %}
+                <a class="dash-button white" href="/login"><i data-lucide="log-in"></i>로그인</a>
+                {% endif %}
+
+            </aside>
+
+        </main>
+
+        <nav class="dash-bottom-menu">
+            <a href="/chat" class="menu-btn"><i data-lucide="mic"></i>음성 대화</a>
+            <a href="/camera" class="menu-btn"><i data-lucide="camera"></i>카메라</a>
+            <a href="/board" class="menu-btn"><i data-lucide="square-pen"></i>게시판</a>
+        </nav>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>
