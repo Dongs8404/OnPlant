@@ -777,14 +777,15 @@ def video_feed_plant_yolo(request: Request):
 
 # 동현 수정
 class SensorLogRequest(BaseModel):
-    robot_id: str
     light: float
-    temperature: float
-    humidity: float
-    soil_moisture: float
+    robot_id: str = "rasbot"
+    temperature: float = 25.0
+    humidity: float = 50.0
+    soil_moisture: float = 45.0
 
 
 @app.post("/api/sensor")
+@app.post("/sensor")
 def api_save_sensor(data: SensorLogRequest):
     sensor = data.model_dump()
     save_sensor_logs(sensor)
