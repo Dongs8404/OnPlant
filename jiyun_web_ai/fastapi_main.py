@@ -7,12 +7,12 @@ from pydantic import BaseModel
 
 from ai.plant_status import check_plant_status
 from ai.chat_ai import ask_plant
-from hardware.sensors import read_sensor_data
-from db.database import (
+from hardware.sensors import read_sensor_logs
+from db.mysql_database import (
     init_db,
-    save_sensor_data,
+    save_sensor_logs,
     save_plant_status,
-    get_recent_sensor_data,
+    get_recent_sensor_logs,
     save_chat_log,
     get_recent_chat_logs,
     create_user,
@@ -101,9 +101,9 @@ def speak_robot(text):
 def calculate_health(sensor):
     score = 100
 
-    if sensor["soil"] < 30:
+    if sensor["soil_moisture"] < 30:
         score -= 20
-    elif sensor["soil"] > 70:
+    elif sensor["soil_moisture"] > 70:
         score -= 10
 
     if sensor["temperature"] < 18:
@@ -168,10 +168,10 @@ def home(request: Request):
 
     global current_sensor, current_plant, current_action_list
 
-    sensor = read_sensor_data()
+    sensor = read_sensor_logs()
 
     result = check_plant_status(
-        sensor["soil"],
+        sensor["soil_moisture"],
         sensor["temperature"],
         sensor["humidity"],
         sensor["light"]
@@ -179,10 +179,10 @@ def home(request: Request):
 
     health_score = calculate_health(sensor)
 
-    save_sensor_data(sensor)
+    save_sensor_logs(sensor)
     save_plant_status(result)
 
-    recent_logs = get_recent_sensor_data(10)
+    recent_logs = get_recent_sensor_logs(10)
     recent_chats = get_recent_chat_logs(5)
 
     plant = {
@@ -200,8 +200,8 @@ def home(request: Request):
         {
             "icon": "droplet",
             "name": "수분",
-            "status": get_soil_status(sensor["soil"]),
-            "value": str(sensor["soil"]) + "%"
+            "status": get_soil_status(sensor["soil_moisture"]),
+            "value": str(sensor["soil_moisture"]) + "%"
         },
         {
             "icon": "sun",
@@ -264,10 +264,10 @@ def home(request: Request):
 
 @app.get("/face")
 def face(request: Request):
-    sensor = read_sensor_data()
+    sensor = read_sensor_logs()
 
     result = check_plant_status(
-        sensor["soil"],
+        sensor["soil_moisture"],
         sensor["temperature"],
         sensor["humidity"],
         sensor["light"]
@@ -305,10 +305,10 @@ def face(request: Request):
 
 @app.get("/face-status")
 def face_status():
-    sensor = read_sensor_data()
+    sensor = read_sensor_logs()
 
     result = check_plant_status(
-        sensor["soil"],
+        sensor["soil_moisture"],
         sensor["temperature"],
         sensor["humidity"],
         sensor["light"]
@@ -400,7 +400,7 @@ def logs_page(request: Request):
     if not current_user:
         return redirect_to_login()
 
-    recent_logs = get_recent_sensor_data(20)
+    recent_logs = get_recent_sensor_logs(20)
     recent_chats = get_recent_chat_logs(20)
 
     return templates.TemplateResponse(
@@ -690,7 +690,7 @@ def chat(data: ChatRequest):
     global current_sensor, current_plant, current_action_list
 
     if not current_sensor:
-        current_sensor = read_sensor_data()
+        current_sensor = read_sensor_logs()
 
     if not current_plant:
         current_plant = {
@@ -774,3 +774,22 @@ def video_feed_plant_yolo(request: Request):
         generate_frames("plant", yolo=True),
         media_type="multipart/x-mixed-replace; boundary=frame"
     )
+
+# 동현 수정
+class SensorLogRequest(BaseModel):
+    robot_id: str
+    light: float
+    temperature: float
+    humidity: float
+    soil_moisture: float
+
+
+@app.post("/api/sensor")
+def api_save_sensor(data: SensorLogRequest):
+    sensor = data.model_dump()
+    save_sensor_logs(sensor)
+
+    return {
+        "result": "success",
+        "data": sensor
+    }
